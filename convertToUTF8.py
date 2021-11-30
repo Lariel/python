@@ -9,14 +9,16 @@ detector = UniversalDetector()
 try:
     infilepath = sys.argv[1]
 except IndexError:
-    infilepath = pathlib.Path().resolve()
+    #infilepath = pathlib.Path().resolve() #pasta atual
+    print('Informar a pasta de origem dos arquivos')
+    raise
 
 print('Pasta de trabalho: ', infilepath)
 
 try:
     outfilepath = sys.argv[2]
 except IndexError:
-    outfilepath = pathlib.Path().resolve()
+    outfilepath = infilepath
 
 print('Pasta de saída: ', outfilepath)
 
@@ -43,7 +45,7 @@ def checkencode(inpath):
 def savefile(inpath, outpath):
     print('Salvando arquivo ', outpath)
 
-    #outpath.write_text(inpath.read_text(encoding="ISO-8859-1"), encoding="utf8")
+    outpath.write_text(inpath.read_text(encoding="ISO-8859-1"), encoding="utf8")
 
     print(' ')
 
