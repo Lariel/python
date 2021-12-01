@@ -1,37 +1,27 @@
 import os;
 import sys;
 import pathlib;
-from chardet.universaldetector import UniversalDetector
-from pathlib import Path
+from pathlib import Path;
+from chardet.universaldetector import UniversalDetector;
 
 detector = UniversalDetector()
 
 try:
-    infilepath = sys.argv[1]
+    infilepath = Path(sys.argv[1])
 except IndexError:
-    #infilepath = pathlib.Path().resolve() #pasta atual
-    print('Informar a pasta de origem dos arquivos')
-    raise
+    infilepath = pathlib.Path().resolve() #pasta atual
 
-print('Pasta de trabalho: ', infilepath)
-
-try:
-    outfilepath = sys.argv[2]
-except IndexError:
-    outfilepath = infilepath
-
-print('Pasta de saída: ', outfilepath)
+print('Pasta de trabalho: ', infilepath,' e subpastas.')
 
 def loadfile(filename):
-    inpath = Path(infilepath+'\\'+filename)
-    print('Carregando arquivo ', inpath)
+    print(' \nCarregando arquivo ', filename)
     
-    checkencode(inpath)
+    checkencode(filename)
 
-def checkencode(inpath):
+def checkencode(filename):
 
     detector.reset()
-    for line in open(inpath, 'rb'):
+    for line in open(filename, 'rb'):
         detector.feed(line)
         if detector.done: break
     detector.close()
@@ -39,17 +29,14 @@ def checkencode(inpath):
     print('Encode detectado '+ fileenconde)
 
     if fileenconde == 'ISO-8859-1':
-        outpath = Path(outfilepath+'\\'+filename)
-        savefile(inpath, outpath)
+        filepath = Path(filename)
+        savefile(filepath)
 
-def savefile(inpath, outpath):
-    print('Salvando arquivo ', outpath)
+def savefile(filepath):
+    print('Salvando arquivo ', filepath, '\n')
+    filepath.write_text(filepath.read_text(encoding="ISO-8859-1"), encoding="utf8")
 
-    outpath.write_text(inpath.read_text(encoding="ISO-8859-1"), encoding="utf8")
-
-    print(' ')
-
-for root, dirs, files in os.walk(infilepath):
-    for filename in files: 
+for pasta, subpastas, arquivos in os.walk(infilepath):
+    for filename in arquivos: 
         if filename[-5:] == '.java': # Controle de tipo de arquivo
-            loadfile(filename)
+            loadfile(os.path.join(pasta, filename))
